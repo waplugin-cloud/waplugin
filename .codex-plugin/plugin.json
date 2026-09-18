@@ -1,0 +1,23 @@
+{
+  "name": "waplugin",
+  "version": "0.2.0",
+  "description": "Search and summarize authorized WhatsApp conversations, find contacts and groups, and send text messages or reactions with per-phone permissions.",
+  "author": {
+    "name": "Rafael Xavier"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "waplugin for WhatsApp",
+    "shortDescription": "Search WhatsApp conversations and send messages with your permission.",
+    "longDescription": "Find contacts and groups, search messages, summarize conversations, and check connection status across your authorized WhatsApp accounts. Results reflect retained history and may not include every message. You control read access, text-message sending, and reactions separately for each phone. Messages and reactions are sent only when you ask and the selected phone has the matching permission.",
+    "developerName": "Rafael Xavier",
+    "category": "Productivity",
+    "capabilities": ["Account connection status", "Chat and group lookup", "Contact search", "Message search and summaries", "Text messages with permission", "Reactions with permission"],
+    "defaultPrompt": [
+      "Summarize today's messages in a WhatsApp chat.",
+      "Find a contact or group in my WhatsApp accounts.",
+      "Check the connection status of my WhatsApp accounts."
+    ]
+  },
+  "mcpServers": "./.mcp.json"
+}

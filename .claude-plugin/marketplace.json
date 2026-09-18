@@ -1,0 +1,15 @@
+{
+  "name": "waplugin-cloud",
+  "description": "WhatsApp plugin for any MCP-capable assistant.",
+  "owner": {
+    "name": "Rafael Xavier",
+    "url": "https://waplugin.cloud"
+  },
+  "plugins": [
+    {
+      "name": "waplugin",
+      "source": "./",
+      "description": "Search and summarize authorized WhatsApp conversations, find contacts and groups, and send text messages or reactions with per-phone permissions."
+    }
+  ]
+}

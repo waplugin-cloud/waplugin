@@ -1,0 +1,10 @@
+{
+  "name": "waplugin",
+  "description": "Search and summarize authorized WhatsApp conversations, find contacts and groups, and send text messages or reactions with per-phone permissions.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Rafael Xavier"
+  },
+  "homepage": "https://waplugin.cloud",
+  "repository": "https://github.com/rxaviers/waplugin.cloud"
+}
