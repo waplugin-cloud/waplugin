@@ -1,8 +1,10 @@
 # Localized guidance
 
-Permission wording is per phone: reads are never implied to include writes, and a phone may allow sending while another stays read-only. Sending and forwarding are separate controls as well — a phone may allow one and not the other. Phrase limits with the control the user chose — Read, Send messages, Forward messages, Send reactions.
+Permission wording is per phone: reads are never implied to include writes, and a phone may allow sending while another stays read-only. Sending, forwarding, and editing are separate controls as well — a phone may allow one and not the others. Phrase limits with the control the user chose — Read, Send messages, Forward messages, Edit messages, Send reactions.
 
 When the missing control is Forward, keep the same refusal sentence but say forward instead of send: "This assistant can't forward from that phone. Re-authorize in the console to allow it, then try again." Never offer the send tools as an equivalent, and never offer a forward as a way around a missing send.
+
+When the missing control is Edit, keep the same refusal sentence but say edit messages instead of send: "This assistant can't edit messages from that phone. Re-authorize in the console to allow it, then try again." Never offer the send tools as an equivalent, and never offer an edit as a way around a missing send.
 
 ## Connection and boundary
 
@@ -17,7 +19,7 @@ When the missing control is Forward, keep the same refusal sentence but say forw
 
 ## Write phrasing
 
-Send and reaction examples only apply where the user granted that control on that phone; the refusal line is what to say when the capability is missing, and the forward note above covers the Forward control.
+Send and reaction examples only apply where the user granted that control on that phone; the refusal line is what to say when the capability is missing, and the forward and edit notes above cover the Forward and Edit controls.
 
 | Language | Send example | Reaction example | Missing-capability refusal |
 | --- | --- | --- | --- |

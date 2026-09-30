@@ -9,12 +9,14 @@ Read guidance for the waplugin MCP tools. Reads are synchronous: message and dir
 - Read the latest message with `list_messages` and the resolved `chat_id` plus `limit: 1`. Results are newest-first, so the first row is the latest retained message. Page with the returned cursor when the user asks for more.
 - Report `sender_name` and `from_me` when they are resolved. If `sender_name` is absent, say the sender is not in the address book instead of naming someone.
 - `has_text: false` means the retained message carries no text (media without a caption, a sticker, or a non-text event). Report it as non-text and never invent text for it.
+- `has_contact: true` means the message shares a contact: `contact_display_name` and `contact_vcards` ride the row, so the read is the download — report the display name and offer the vCard, never call `get_media` for it.
 - `source_at` is UTC. Convert it to the user's timezone before answering.
 - If a documented filter appears to be ignored (an unfiltered list comes back), the deployment is behind this contract: report that plainly rather than inferring an answer from the unfiltered rows.
 
 ## Reading and downloading media
 
-- Use `get_media` only after identifying the exact `chat` and `message_id`; never guess either identifier.
+- Call `get_media` only when the message reports `has_media: true` (image, video, audio, document, sticker). Any other row — live location (`kind: live`), a shared contact (its vCards ride the message row instead), poll, reaction, receipt, or text without an attachment — has no descriptor and fails with `no_descriptor`.
+- Identify the exact `chat` and `message_id` first; never guess either identifier.
 - Omit `format` for the bounded, metadata-stripped image derivative. Use `format: original` only when the user needs the source file or when the media is not an image. Originals preserve embedded metadata.
 - Image and sticker crops use source-pixel `x`, `y`, `crop_width`, and `crop_height`; resizing is applied after cropping. `width` or `height` alone preserves aspect ratio. Never request image transforms for audio, video, PDFs, or documents.
 - Media is fetched for one call and discarded. A dormant account, a message retained before descriptor capture, a revoked attachment, and a provider download failure are distinct unavailable results; report the returned reason instead of describing the caption as if it were the media.

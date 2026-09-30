@@ -9,7 +9,7 @@
     {
       "name": "waplugin",
       "source": "./",
-      "description": "Search and summarize authorized WhatsApp conversations, find contacts and groups, and send text messages or reactions with per-phone permissions."
+      "description": "Search authorized WhatsApp conversations, view media, and send, forward, edit text messages, or add reactions with independent per-phone permissions."
     }
   ]
 }
