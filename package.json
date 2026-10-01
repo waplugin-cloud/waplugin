@@ -13,9 +13,15 @@
     ".claude-plugin/*.json",
     ".codex-plugin/*.json",
     "assets/*.svg",
-    ".mcp.json"
+    ".mcp.json",
+    "plugin.json",
+    "mcp.json",
+    "scripts/package-plugin.py"
   ],
   "exports": {
     "./skills/*": "./skills/*"
+  },
+  "scripts": {
+    "package:chatgpt": "python3 scripts/package-plugin.py"
   }
 }

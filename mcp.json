@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "waplugin": {
+      "url": "https://mcp.waplugin.cloud/mcp",
+      "type": "streamable-http"
+    }
+  },
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json"
+}
