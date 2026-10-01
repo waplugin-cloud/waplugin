@@ -11,13 +11,13 @@
       "interface": {
         "displayName": "waplugin for WhatsApp",
         "shortDescription": "Search and message on WhatsApp",
-        "longDescription": "Find contacts and groups, search messages, summarize conversations, view retained media and shared contacts, and check connection status across your authorized WhatsApp accounts. Results reflect retained history and may not include every message. Read access, sending, forwarding, editing, and reactions are independent per-phone permissions. Edit messages replaces retained self-sent text within 15 minutes of the original send; send permission does not grant editing. Writes happen only when you ask and the selected phone has the matching permission.",
+        "longDescription": "waplugin connects your authorized WhatsApp accounts to your AI assistant so you can catch up on conversations and communicate with contacts and groups. Search retained messages, summarize chats, find contacts and groups, view retained media and shared contacts, and check account connection status. When you ask, send text or media, forward messages, media or contacts, edit your own recently sent text, or add reactions. Read access, sending, forwarding, editing, and reactions each require an independent permission for the selected phone. Results reflect retained history and may not include every message. Editing is limited to retained text sent by that phone within 15 minutes of the original send.",
         "developerName": "Rafael Xavier",
         "composerIcon": "./assets/icon.svg",
         "composerIconDark": "./assets/icon-dark.svg",
         "logo": "./assets/icon.svg",
         "logoDark": "./assets/icon-dark.svg",
-        "category": "Productivity",
+        "category": "Communication",
         "capabilities": [
           "Account connection status",
           "Chat and group lookup",
