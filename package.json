@@ -1,6 +1,6 @@
 {
   "name": "@waplugin/plugin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Permission-aware WhatsApp plugin manifests and skill resources.",
   "type": "module",
@@ -12,6 +12,7 @@
     "skills/**/*.md",
     ".claude-plugin/*.json",
     ".codex-plugin/*.json",
+    "assets/*.svg",
     ".mcp.json"
   ],
   "exports": {

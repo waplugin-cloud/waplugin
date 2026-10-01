@@ -1,7 +1,7 @@
 {
   "name": "waplugin",
   "description": "Search authorized WhatsApp conversations, view media, and send, forward, edit text messages, or add reactions with independent per-phone permissions.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": {
     "name": "Rafael Xavier"
   },
