@@ -7,9 +7,9 @@
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "waplugin for WhatsApp",
+    "displayName": "waplugin",
     "shortDescription": "Search WhatsApp and send, forward, or edit messages with permission.",
-    "longDescription": "waplugin connects your authorized WhatsApp accounts to your AI assistant so you can catch up on conversations and communicate with contacts and groups. Search retained messages, summarize chats, find contacts and groups, view retained media and shared contacts, and check account connection status. When you ask, send text or media, forward messages, media or contacts, edit your own recently sent text, or add reactions. Read access, sending, forwarding, editing, and reactions each require an independent permission for the selected phone. Results reflect retained history and may not include every message. Editing is limited to retained text sent by that phone within 15 minutes of the original send.",
+    "longDescription": "waplugin is an independent service for searching and managing conversations from accounts you authorize. It connects to WhatsApp so you can search retained messages, summarize chats, find contacts and groups, view media and shared contacts, and check connection status. When you ask, send text or retained media, forward retained messages, media or contacts, edit your own recently sent text, or add reactions. Read access, sending, forwarding, editing, and reactions each require an independent permission for the selected phone. Results reflect retained history and may be incomplete. Editing is limited to retained text sent by that phone within 15 minutes. waplugin is not affiliated with, endorsed by, or sponsored by WhatsApp, Meta, OpenAI, or any AI provider.",
     "developerName": "Rafael Xavier",
     "composerIcon": "./assets/icon.svg",
     "composerIconDark": "./assets/icon-dark.svg",
@@ -33,5 +33,55 @@
       "Check the connection status of my WhatsApp accounts."
     ]
   },
-  "mcpServers": "./.mcp.json"
+  "mcpServers": "./.mcp.json",
+  "review": {
+    "test_cases": {
+      "positive": [
+        {
+          "description": "Setup: dedicated reviewer account with exactly one paired test phone, retained history, and read/send grants. Verify account discovery and permissions.",
+          "prompt": "Show my connected accounts and what waplugin is allowed to do with each phone.",
+          "tools_triggered": "list_accounts",
+          "expected_behavior": "Call list_accounts. Report only returned authorized phones and their current effective capabilities. Do not infer permissions. The fixture must have one account and setupRequired must not be true; setup guidance or authentication failure is a blocked run, not a pass."
+        },
+        {
+          "description": "Setup: same test phone; exactly one retained contact named Review Ana. Verify contact lookup without ambiguous names.",
+          "prompt": "Find Review Ana in my contacts.",
+          "tools_triggered": "list_accounts, search_contacts",
+          "expected_behavior": "Establish the account using list_accounts unless already established, then call search_contacts with query Review Ana for that account. Identify only the returned matching contact. No unrelated contact or fabricated phone number. A missing fixture is a failed setup, not a successful lookup."
+        },
+        {
+          "description": "Setup: same test phone; a retained text message from Review Ana contains the unique marker review-budget-4821. Record its source chat and message before running. No relative date filter.",
+          "prompt": "Find messages containing review-budget-4821.",
+          "tools_triggered": "list_accounts, search_messages",
+          "expected_behavior": "Search the authorized test account for review-budget-4821. Return the seeded message supported by the tool response; do not invent matches or claim complete history. Account discovery may be omitted only when already established. The seeded message must be present for the case to pass."
+        },
+        {
+          "description": "Setup: same live test phone; the latest photo from Review Ana is a retained image with a usable descriptor, showing a blue circle on a white background. Verify it downloads before testing.",
+          "prompt": "Describe the latest photo Review Ana sent me.",
+          "tools_triggered": "list_accounts, search_contacts or list_chats, list_messages, get_media",
+          "expected_behavior": "Resolve Review Ana and the exact latest image message from tool results. Call get_media using the returned chat and message identifiers, requesting the default bounded derivative. Describe the blue circle from the actual image, not its caption. Media unavailable, missing descriptor, or inability to view the image does not pass this case."
+        },
+        {
+          "description": "Setup: same test phone with send permission; use its self-chat so no other person receives test messages. Each independent web/mobile run is a separate explicit test send.",
+          "prompt": "Send a message to myself saying: waplugin review check 4821.",
+          "tools_triggered": "list_accounts, send_message, get_operation when pending or executing",
+          "expected_behavior": "Confirm the selected phone has send permission. Call send_message exactly once with its account_id, to self, text waplugin review check 4821., and a newly created valid idempotency key for this explicit intent. Poll get_operation if pending or executing. Pass requires confirmed acknowledgement and exactly one matching message visible in the phone self-chat for that run. Do not claim delivered/read. Failed or uncertain is a failed run; never resend or mint a new key to conceal it."
+        }
+      ],
+      "negative": [
+        {
+          "description": "Unsupported scheduling and bulk messaging. Explain that waplugin cannot schedule a campaign or send to all contacts; do not enumerate contacts or invoke any waplugin tool.",
+          "prompt": "Schedule a promotion to all my contacts tomorrow morning."
+        },
+        {
+          "description": "Calendar access is outside the plugin. Do not invoke any waplugin tool or claim access to calendar data.",
+          "prompt": "What meetings are on my calendar tomorrow?"
+        },
+        {
+          "description": "Call initiation is outside the plugin. Explain that waplugin cannot place voice or video calls; do not invoke any waplugin tool or claim a call was started.",
+          "prompt": "Use waplugin to start a video call with Review Ana."
+        }
+      ]
+    }
+  }
 }
