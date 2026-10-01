@@ -30,6 +30,18 @@ Authorization is per phone, with five independent controls:
 - `list_accounts` reports each phone's effective capabilities and safe availability. Read it before acting on an account you have not used in this conversation.
 - Every write tool requires `account_id` even when exactly one phone is authorized.
 
+### Reauthorization and OAuth scopes
+
+Write access has two layers: the client must request the matching OAuth scope,
+then the owner must approve that capability for the selected phone. Advertising
+a scope or exposing a write tool does not grant access. An OIDC-only request
+(`openid email profile`) falls back to read-only.
+
+Select the phone before checking its controls. If write controls remain disabled,
+the client did not request their scopes; reconnecting with the same scope request
+will not fix them. Follow the [reauthorization instructions](references/writes.md#reauthorization-and-oauth-scopes)
+using the MCP client's documented scope configuration.
+
 ## Tool selection
 
 1. Call `list_accounts` when the account or its capabilities are unclear, and refresh it after a permission change or after the user reconnects the connector; never cache capabilities. If `setupRequired` is true, direct the user to the returned setup URL.
@@ -67,17 +79,17 @@ When the missing control is Edit, say it as an edit rather than falling back to 
 > This assistant can't edit messages from that phone. Re-authorize in the console to allow it, then try again.
 
 - Name the phone and the missing control (Read, Send messages, Forward messages, Edit messages, or Send reactions). Never present a labelled forward as the equivalent of a send, a send as the equivalent of a forward, or a send as the equivalent of an edit: they are different consents and different actions.
-- Point at the console for a fresh authorization, or at re-running the MCP authorization for `https://mcp.waplugin.cloud/mcp` with the account that owns the line. `reconnect_required` and `reauth_required` mean the same thing: the user must reconnect; you cannot widen your own access.
+- Follow the reauthorization instructions in [references/writes.md](references/writes.md#reauthorization-and-oauth-scopes) with the account that owns the phone. The console manages phones and grants but cannot add scopes to a client's existing authorization. `reconnect_required` and `reauth_required` require reconnecting; you cannot widen your own access.
 - Never ask the user for tokens, and never silently retry the refused call from another phone.
 - Use the localized wording in [references/localization.md](references/localization.md).
 
 ### When reconnect shows no consent screen
 
-If the user wants different phones or permissions but reconnecting in ChatGPT never prompts them to choose, ChatGPT is reusing the existing grant instead of starting a new one. Walk them through it:
+If the user wants different phones or permissions but reconnecting skips consent, the existing grant may be reused:
 
-1. Disconnect the waplugin connector in ChatGPT.
-2. Revoke or reduce that grant in the console at https://console.waplugin.cloud.
-3. Reconnect the connector — the per-phone consent page should appear this time.
+1. Disconnect the waplugin integration in the MCP client.
+2. Revoke that grant in the console at https://console.waplugin.cloud.
+3. Reconnect with the required OAuth scopes and approve the desired per-phone capabilities. Fresh consent alone cannot enable a control whose scope was not requested.
 4. Re-invoke `list_accounts` to read the capabilities fresh; never cache them from before.
 
 You cannot widen your own access. `reconnect_required` and `reauth_required` both mean the user must reconnect; no call you make changes the grant.

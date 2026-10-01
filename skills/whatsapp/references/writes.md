@@ -62,12 +62,51 @@ Editing, forwarding, and sending are different acts, so pick deliberately:
 - `failed` means the service did not perform it. Report the failure plainly.
 - `uncertain` means the outcome is unknown: stop waiting and ask the user. Never auto-resend, never retry with a new key, and never tell the user to "resubmit with a new key".
 
+## Reauthorization and OAuth scopes
+
+There are two permission layers: the client requests OAuth scopes, then the
+owner approves corresponding capabilities per phone. Discovery metadata and
+client tool toggles do not grant either permission. An OIDC-only request
+(`openid email profile`) receives the read-only fallback.
+
+| Capability | Required OAuth scope |
+| --- | --- |
+| Send messages or media | `whatsapp.messages.write` |
+| Forward text, media, or contacts | `whatsapp.messages.forward` |
+| Edit the phone's own eligible messages | `whatsapp.messages.edit` |
+| Send reactions | `whatsapp.reactions.write` |
+
+Select the phone on the consent page first. If a write control is still disabled,
+the client did not request its scope. Do not try to enable it manually or repeat
+the same read-only login. Request the missing scope in a fresh authorization,
+then approve that control for the phone. Never request broader access unless the
+user wants it.
+
+Reconnect through the MCP client's OAuth flow for
+`https://mcp.waplugin.cloud/mcp`, requesting the required scopes from the table
+and any read scopes needed. Use the client's documented scope configuration;
+do not assume its default login requests write access.
+
+If the client offers no scope configuration and write controls remain disabled,
+report that its authorization request needs inspection. Ask only for the decoded
+`scope` value if needed, never the full authorization URL, tokens, or credentials.
+Refreshing tools or reconnecting with the same scopes cannot add write access.
+
+If reconnecting skips consent, have the user disconnect the integration, revoke
+the old grant in https://console.waplugin.cloud, and reconnect. Fresh consent
+does not broaden the requested scopes. Never disconnect or revoke access on the
+user's behalf without their instruction.
+
+After the user completes authorization, call `list_accounts` to check the
+phone's effective capabilities again. Do not assume login succeeded or retry a
+refused write until the required capability is present.
+
 ## Capability refusals and error handling
 
 - Missing capability on the target phone: refuse and name the control. English wording: "This assistant can't send from that phone. Re-authorize in the console to allow it, then try again." Use the localized row from [localization.md](localization.md).
 - `forbidden` is a capability refusal, not a transient error: the phone does not hold the scope that tool requires, which for a forward is `whatsapp.messages.forward`, for an edit is `whatsapp.messages.edit`, and never the send scope. Do not retry it, do not switch to `send_media` or `send_message` to reach the same recipient on your own initiative, and do not ask the user for tokens.
-- `reconnect_required` and `reauth_required` mean the user must authorize again — re-run the MCP authorization for `https://mcp.waplugin.cloud/mcp` or grant the access in the console. You cannot widen your own access.
-- If the user wants a phone or control they cannot get and reconnecting shows no consent screen, the old grant is being reused: have them disconnect the connector in ChatGPT, revoke or reduce the grant in the console at https://console.waplugin.cloud, reconnect to reach the per-phone consent page, then re-invoke `list_accounts` and read the capabilities fresh instead of caching them.
+- `reconnect_required` and `reauth_required` mean the user must authorize again. Follow [Reauthorization and OAuth scopes](#reauthorization-and-oauth-scopes) for their client. The console cannot add unrequested scopes to an existing client authorization; you cannot widen your own access.
+- If reconnecting skips consent or the selected phone's write controls are disabled, use the corresponding instructions above. These are different cases: a reused grant needs fresh consent, while a missing OAuth scope needs a changed scope request.
 - `idempotency_conflict` means the same key arrived with different content. Stop and report it; never change the key to force it through.
 - A refused edit names why the target cannot be rewritten: it was not sent by that phone, it is outside WhatsApp's short edit window, it carries no plain text (media, contact, sticker, or a non-text event), or it was revoked. Nothing was changed in any of these cases; the original message is never sent again, duplicated, or moved.
 - A refused attachment source (`send_media` and `forward_media`) carries the media family: `media_unavailable` with a `reason` (`no_message`, `no_descriptor`, `revoked`, `not_connected`, `closed`, `download_failed`, `invalid_media`, `unsupported_kind`) or `media_too_large`. Nothing was sent in any of these cases. Report the reason plainly, and never answer one by re-uploading the file from your own context: you have no bytes, and the service is the only party that may read the source. A `not_connected` or `closed` reason is temporary — the phone must be online — while `revoked`, `no_descriptor`, and `unsupported_kind` mean that source can never be moved. `history_unavailable` means the account retains no history by policy, so no source from it can be sent or forwarded at all.
