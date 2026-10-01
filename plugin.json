@@ -33,7 +33,11 @@
           "Summarize today's messages in a WhatsApp chat.",
           "Find a contact or group in my WhatsApp accounts.",
           "Check the connection status of my WhatsApp accounts."
-        ]
+        ],
+        "websiteURL": "https://waplugin.cloud/",
+        "supportURL": "https://waplugin.cloud/support",
+        "privacyPolicyURL": "https://waplugin.cloud/privacy",
+        "termsOfServiceURL": "https://waplugin.cloud/terms"
       }
     }
   }
