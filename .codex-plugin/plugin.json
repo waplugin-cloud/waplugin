@@ -62,10 +62,10 @@
           "expected_behavior": "Resolve Review Ana and the exact latest image message from tool results. Call get_media using the returned chat and message identifiers, requesting the default bounded derivative. Describe the blue circle from the actual image, not its caption. Media unavailable, missing descriptor, or inability to view the image does not pass this case."
         },
         {
-          "description": "Setup: same test phone with send permission; use its self-chat so no other person receives test messages. Each independent web/mobile run is a separate explicit test send.",
-          "prompt": "Send a message to myself saying: waplugin review check 4821.",
-          "tools_triggered": "list_accounts, send_message, get_operation when pending or executing",
-          "expected_behavior": "Confirm the selected phone has send permission. Call send_message exactly once with its account_id, to self, text waplugin review check 4821., and a newly created valid idempotency key for this explicit intent. Poll get_operation if pending or executing. Pass requires confirmed acknowledgement and exactly one matching message visible in the phone self-chat for that run. Do not claim delivered/read. Failed or uncertain is a failed run; never resend or mint a new key to conceal it."
+          "description": "Setup: reviewer demo account has read access and at least one retained chat. Verify chat discovery from stored history; no live phone connection or write permission is required.",
+          "prompt": "List up to five chats available in my demo account.",
+          "tools_triggered": "list_accounts, list_chats",
+          "expected_behavior": "Establish the authorized demo account with list_accounts unless already established. Call list_chats for that account with limit 5. Report no more than five chats, using only names and metadata returned by the tool. Do not invent chats, claim complete history, download media, or invoke any write tool. A successful run requires at least one retained chat in the prepared demo fixture; missing authorization or an empty fixture is blocked setup, not a pass."
         }
       ],
       "negative": [
